@@ -20,6 +20,7 @@ import { RateLimiterStrategy } from "@server/utils/RateLimiter";
 import { TeamPreference } from "@shared/types";
 import { OAuthHelper } from "@server/utils/oauth/OAuthHelper";
 import { OAuthInterface } from "@server/utils/oauth/OAuthInterface";
+import { RequestHelper } from "@server/utils/RequestHelper";
 import { getTeamFromContext } from "@server/utils/passport";
 import oauthErrorHandler from "./middlewares/oauthErrorHandler";
 import registrationAuth from "./middlewares/registrationAuth";
@@ -48,8 +49,8 @@ router.post(
   auth({ type: AuthenticationType.APP }),
   async (ctx) => {
     const { user } = ctx.state.auth;
-    const clientId = ctx.request.body.client_id;
-    if (!clientId) {
+    const clientId = RequestHelper.getBodyObject(ctx.request).client_id;
+    if (typeof clientId !== "string" || !clientId) {
       throw ValidationError("Missing client_id");
     }
 
